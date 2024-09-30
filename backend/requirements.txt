@@ -1,0 +1,7 @@
+Django==3.2.5							# The web framework for perfectionists with deadlines
+djangorestframework==3.12.4				# IF WE USE APIs Web APIs for Django, effortlessly
+psycopg2-binary==2.9.1					# PostgreSQL adapter for Python
+django-cors-headers==3.7.0				# Handles CORS headers needed for cross-origin requests
+djangorestframework-simplejwt==4.6.0	# JSON Web Token authentication plugin for Django REST Framework
+python-dotenv==0.17.1					# Reads key-value pairs from a .env file and sets them as environment variables
+web3==5.23.1							# A Python library for interacting with Ethereum
