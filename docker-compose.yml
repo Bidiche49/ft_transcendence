@@ -1,15 +1,57 @@
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "8080:80"
+  db:
+    container_name: db
+    image: postgres
+    env_file:
+      - .env
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - app_network
+    restart: unless-stopped
+
   backend:
-    build: ./backend
+    container_name: backend
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./backend:/app
+      - share-volume:/app/share
+    networks:
+      - app_network
     ports:
       - "8000:8000"
-  db:
-    image: postgres
-    environment:
-      POSTGRES_DB: exampledb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+    depends_on:
+      - db
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  frontend:
+    container_name: frontend
+    image: frontend
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/src/app
+      - share-volume:/usr/share/nginx/html/share
+    networks:
+      - app_network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  database:
+    name: database
+  share-volume:
+    name: share-volume
