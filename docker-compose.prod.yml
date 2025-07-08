@@ -1,0 +1,16 @@
+services:
+  fastify:
+    container_name: fastify
+    build: ./backend
+    ports: ["8080:8080"]
+    volumes:
+      - ./frontend/public:/backend/public
+    restart: always
+    depends_on:
+      - frontend
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    volumes:
+      - ./frontend/public:/frontend/public

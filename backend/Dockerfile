@@ -1,20 +1,20 @@
-# Use an official Python image as a base
-FROM python:3.10-slim
+FROM node:alpine3.21
 
-# Set the working directory in the container
-WORKDIR /app
+RUN apk update && \
+	apk upgrade && \
+	apk add --no-cache openssl sqlite
 
-# Copy the requirements file into the container
-COPY requirements.txt /app/
+RUN mkdir -p /etc/fastify/ssl && \
+	openssl req -x509 -nodes -out /etc/fastify/ssl/cert.pem -keyout /etc/fastify/ssl/key.pem -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=ale-tell.42.fr/UID=ale-tell"
 
-# Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /backend
 
-# Copy the entire backend code into the container
-COPY . /app/
+COPY ./package*.json .
 
-# Expose the port that the app runs on
-EXPOSE 8000
+RUN npm install
 
-# Run migrations and start the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY . .
+
+EXPOSE 8080
+
+CMD ["npm", "run", "start"]
